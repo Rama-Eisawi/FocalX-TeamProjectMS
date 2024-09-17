@@ -72,6 +72,7 @@ class TaskService
         ]);
         // Set the role manually since it is guarded
         $projectUser->role = $request->role;
+        $projectUser->save();
         // Assign the task to the user
         $assignedTask = ProjectUserTask::create([
             'project_user_id' => $projectUser->id,

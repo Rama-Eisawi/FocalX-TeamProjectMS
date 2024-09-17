@@ -6,6 +6,7 @@ use App\Http\Requests\TaskFormRequest;
 use App\Http\Responses\ApiResponse;
 use App\Models\ProjectUser;
 use App\Models\Task;
+use App\Models\User;
 use App\Services\TaskService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,11 +20,17 @@ class TaskController extends Controller
         $this->taskService = $taskService;
     }
     /**
-     * Display a listing of the resource.
+     * Get all user task related to a specific project
      */
-    public function index()
+    public function index($projectId)
     {
-        //
+        $userId = Auth::user();
+        $user = User::findOrFail($userId->id);
+
+
+        // Fetch tasks for this user related to the specific project
+        $tasks = $user->tasks()->where('tasks.project_id', $projectId)->get();
+        return ApiResponse::success($tasks, 'Retreive your tasks!', 200);
     }
 
     /**

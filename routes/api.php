@@ -25,16 +25,20 @@ Route::controller(AuthController::class)
         Route::post('logout', 'logout')->name('auth.logout')->middleware('auth:api'); //This middleware ensures that the user is authenticated via a JWT token
     });
 
-Route::middleware(['auth:api'])->group(function () {
-    //assigned the task to a user
-    Route::post('/projects/{project}/tasks/{task}/assign/{user}', [TaskController::class, 'assignRole']);
+Route::middleware(['auth:api'])->prefix('projects/{project}')->group(function () {
+    Route::prefix('tasks')->group(function () {
+        //assigned the task to a user
+        Route::post('{task}/assign/{user}', [TaskController::class, 'assignRole']);
 
-    //create a task by the manager of the project
-    Route::post('/projects/{project}/tasks', [TaskController::class, 'store']); //done
+        //create a task by the manager of the project
+        Route::post('', [TaskController::class, 'store']);
 
+        //get all user task related to a specific project
+        Route::get('', [TaskController::class, 'index']);
+    });
     //create a project by admin
-    Route::post('/projects', [ProjectController::class, 'store']); //done
+    Route::post('', [ProjectController::class, 'store']);
     //assigned a manager role for a user
-    Route::post('/projects/{project}/{user}', [ProjectController::class, 'assignManager']); //done
+    Route::post('{user}', [ProjectController::class, 'assignManager']); 
 
 });
